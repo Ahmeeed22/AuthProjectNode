@@ -5,7 +5,7 @@ const Post = require("../model/post.model");
 
 // get all posts with user not blocked from admin
 const getAllposts=async(req,res)=>{
-            const status ="active"
+   
             let posts=await Post.find().populate({
                 path: 'userID',
                 select: ['name', "email","status"]

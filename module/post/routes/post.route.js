@@ -1,16 +1,20 @@
 const validationRequest = require("../../../common/middleware/validationRequest");
 const { getAllposts, addPost, deletePost, updateUserPost, getPost } = require("../controllers/post.control");
-const {  updatePostSchema, deletePostSchema } = require("../joi/postValidation");
+const {  updatePostSchema, deletePostSchema ,addPostSchema} = require("../joi/postValidation");
 const router=require("express").Router();
-// const isAuthorized= require("../../../common/middleware/isAuthoraized");
-// const { GET_ALL_USERS } = require("../endpoints");
+const isAuthorized= require("../../../common/middleware/isAuthoraized");
+const { GET_ALL_POSTS, GET_THIER_POST ,DELETE_POST,UPDATE_POST, ADD_POST,} = require("../endpoints");
 
-router.get('/allPosts', getAllposts);
-router.get('/userPosts/:userID',getPost)
-router.post('/addPost',addPost) 
-
-router.delete('/deletePost/:id',validationRequest(deletePostSchema),deletePost );
-router.put('/updatePost/:id',validationRequest(updatePostSchema), updateUserPost);
+// get all posts
+router.get('/allPosts', isAuthorized(GET_ALL_POSTS),getAllposts);
+// get profile posts
+router.get('/userPosts/:userID',isAuthorized(GET_THIER_POST),getPost)
+//add posts
+router.post('/addPost',validationRequest(addPostSchema),isAuthorized(ADD_POST),addPost) 
+// delete post
+router.delete('/deletePost/:id',validationRequest(deletePostSchema),isAuthorized(DELETE_POST),deletePost );
+//update post
+router.put('/updatePost/:id',validationRequest(updatePostSchema),isAuthorized(UPDATE_POST), updateUserPost);
 
 
 

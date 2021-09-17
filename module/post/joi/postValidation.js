@@ -5,6 +5,7 @@ module.exports={
             title :Joi.string().required(),
             content:Joi.string().required(),
             userID:Joi.string().required(),
+            status:Joi.string()  
                   
     }), 
 
@@ -17,7 +18,8 @@ module.exports={
         body:Joi.object().required().keys({
             title :Joi.string().required(),
             content:Joi.string().required(),
-            userID:Joi.string().required(),
+            userID:Joi.string().required(), 
+            status:Joi.string()  
         })
     },
     deletePostSchema:{

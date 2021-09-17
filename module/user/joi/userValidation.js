@@ -9,7 +9,7 @@ module.exports={
             .messages({ 'any.only': 'Cpassword does not match to password' }),
             phone:Joi.string(),
             location:Joi.string(),
-            role:Joi.string(), 
+            role:Joi.string().default('user'), 
             status:Joi.string()         
     }),
 

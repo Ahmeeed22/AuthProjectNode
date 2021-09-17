@@ -5,6 +5,7 @@
   title: {type:String},
   content: {type:String},
   userID: { type: mongoose.Schema.Types.ObjectId, ref: 'user' },
+  status:{type:String,default:"active",enum:["active","deactive"]}
 
 
 },{

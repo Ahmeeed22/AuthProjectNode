@@ -12,7 +12,7 @@ const crypto = require ("crypto");
   password: {type:String},
   phone:{type:String},
   location: { type: String },
-  role :{type:String,default:"user",enum: ["user", "admin","superAdmin"]},
+  role :{type:String,default:"user",enum: ["user", "admin"]},
   status:{type:String,default:"active",enum:["active","deactive"]}
  
 

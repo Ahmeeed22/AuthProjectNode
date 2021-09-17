@@ -5,8 +5,8 @@ const Post = require("../model/post.model");
 
 // get all posts with user not blocked from admin
 const getAllposts=async(req,res)=>{
-   
-            let posts=await Post.find().populate({
+            let status="active"
+            let posts=await Post.find({status}).populate({
                 path: 'userID',
                 select: ['name', "email","status"]
             });
@@ -65,7 +65,7 @@ const deletePost=async(req,res)=>{
         res.json({message:"faild" ,err})
     }
 }
-// update
+// update post by thier owner
 const updateUserPost=async(req,res)=>{
     let {id}=req.params;
     let {title,content}=req.body
@@ -76,4 +76,16 @@ const updateUserPost=async(req,res)=>{
         res.json({message:"faild",err})
     }
 }
-module.exports={getAllposts,updateUserPost,deletePost,addPost,getPost}
+// block post by admin 
+const blockPost= async(req,res)=>{
+    let {id}=req.params;
+    try{
+      let post=await  Post.updateOne({_id:id},{status:"deactive"});
+      res.json({message:"Update success",post});
+    }catch(err){
+        res.json({message:"faild",err})
+    }
+}
+
+
+module.exports={getAllposts,updateUserPost,deletePost,addPost,getPost,blockPost}

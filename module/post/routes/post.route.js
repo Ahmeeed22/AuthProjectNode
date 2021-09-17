@@ -1,9 +1,9 @@
 const validationRequest = require("../../../common/middleware/validationRequest");
-const { getAllposts, addPost, deletePost, updateUserPost, getPost } = require("../controllers/post.control");
+const { getAllposts, addPost, deletePost, updateUserPost, getPost, blockPost } = require("../controllers/post.control");
 const {  updatePostSchema, deletePostSchema ,addPostSchema} = require("../joi/postValidation");
 const router=require("express").Router();
 const isAuthorized= require("../../../common/middleware/isAuthoraized");
-const { GET_ALL_POSTS, GET_THIER_POST ,DELETE_POST,UPDATE_POST, ADD_POST,} = require("../endpoints");
+const { GET_ALL_POSTS, GET_THIER_POST ,DELETE_POST,UPDATE_POST, ADD_POST, BLOCK_POST,} = require("../endpoints");
 
 // get all posts
 router.get('/allPosts', isAuthorized(GET_ALL_POSTS),getAllposts);
@@ -15,6 +15,9 @@ router.post('/addPost',validationRequest(addPostSchema),isAuthorized(ADD_POST),a
 router.delete('/deletePost/:id',validationRequest(deletePostSchema),isAuthorized(DELETE_POST),deletePost );
 //update post
 router.put('/updatePost/:id',validationRequest(updatePostSchema),isAuthorized(UPDATE_POST), updateUserPost);
+//block post by admin and super admin
+router.put('/blockPost/:id',isAuthorized(BLOCK_POST),blockPost);
+
 
 
 

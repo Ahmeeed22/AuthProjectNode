@@ -4,20 +4,47 @@ const { StatusCodes } = require("http-status-codes");
 const jwt=require("jsonwebtoken")
 const crypto = require ("crypto");
 
-
+// get all user and admin  BY SUPERADMIN
 const getAllUsers=async(req,res)=>{
-            let users=await User.find({}).select("-password").select("-age").select("-verified");
-            res.json({message:"success",data:users})
+            let userData=[];
+            let adminData=[];
+            try{
+                let users=await User.find().select("-password").select("-age");
+
+                if(req.params.typeUser == "user"){
+                    users.map((item)=>{
+                      if(item.role=="user") {
+                       userData.push(item)
+                      }
+                   })
+                   res.status(StatusCodes.OK).json({message:"success",userData})
+    
+               }else if(req.params.typeUser == "admin"){
+                users.map((item)=>{
+                    if(item.role=="admin") {
+                        adminData.push(item)
+                    }
+                 })
+                 res.status(StatusCodes.OK).json({message:"success",adminData})
+               }
+            }catch(err){
+                res.status(StatusCodes.BAD_REQUEST).json({message:"fail",err})
+            }
+           
+
+            
 }
 
+// registeration
 const signUp=async (req,res)=>{
-       let {name,email,password,phone,location,role,status}=req.body;
+       let {name,email,password,phone,location,status}=req.body;
+      
         try{
             const user=   await User.findOne({email});
             if (user) res.status(StatusCodes.BAD_REQUEST).json({message:"email is already exist"})
             else{
                 
-                let newUser=new User({name,email,password,phone,location,role,status});
+                let newUser=new User({name,email,password,phone,location,status});
                 let user=await newUser.save();
                 res.status(StatusCodes.CREATED).json({message:"success",user})
             }
@@ -55,19 +82,9 @@ const signIn=async(req,res)=>{
     }
 
 }
-//get one user
-const getUser=async(req,res)=>{
-    const id=req.params.id;
-    try{
-      let user=  await User.findOne({ _id : id});
-        res.json({message:"success",user})
 
-    }catch(err){
-        res.json({message:"faild",err})
-    }
-}
-// delete 
-const deleteUser=async(req,res)=>{
+// delete   admin or user by super admin
+const deleteAdmin=async(req,res)=>{
     const {id}=req.params
     try{
        let data=await User.deleteOne({_id:id})
@@ -77,7 +94,7 @@ const deleteUser=async(req,res)=>{
         res.json({message:"faild" ,err})
     }
 }
-// update
+// update user profile
 const updateUser=async(req,res)=>{
     let {id}=req.params;
     let {name,status,email,phone,password}=req.body
@@ -88,4 +105,35 @@ const updateUser=async(req,res)=>{
         res.json({message:"faild",err})
     }
 }
-module.exports={getAllUsers,signUp,getUser,deleteUser,updateUser,signIn}
+// add admin by super admin only
+const addAdmin=async (req,res)=>{
+    let {name,email,password,phone,location,status}=req.body;
+   
+     try{
+         const user=   await User.findOne({email});
+         if (user) res.status(StatusCodes.BAD_REQUEST).json({message:"email is already exist"})
+         else{
+             
+             let newAdmin=new User({name,email,password,phone,location,status,role:"admin"});
+             let admin=await newAdmin.save();
+             res.status(StatusCodes.CREATED).json({message:"success",admin})
+         }
+     
+     }catch(errors){
+         res.status(StatusCodes.BAD_REQUEST).json({message:"faild",errors})
+     }
+
+}
+// block user 
+// block post by admin 
+const blockUser= async(req,res)=>{
+    let {id}=req.params;
+    try{
+      let user=await  User.updateOne({_id:id},{status:"deactive"});
+      res.json({message:"Update success",user});
+    }catch(err){
+        res.json({message:"faild",err})
+    }
+}
+
+module.exports={getAllUsers,signUp,deleteAdmin,updateUser,signIn,addAdmin,blockUser} 
